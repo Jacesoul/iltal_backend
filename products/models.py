@@ -1,4 +1,6 @@
-from django.db   import models
+from django.db              import models
+from django.core.cache      import cache
+
 
 from users.models import User, Host
 from core.models import TimeStampModel
@@ -25,11 +27,25 @@ class Product(TimeStampModel):
     is_group       = models.BooleanField()
     background_url = models.CharField(max_length=2000)
     is_deleted     = models.BooleanField(default=False)
+    user           = models.ManyToManyField(User, through='Like')
+
+    def save(self, *args, **kwargs):
+        cache.delete('products')
+        cache.delete('user_products')
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        cache.delete('products')
+        cache.delete('user_products')
+        super().delete(*args, **kwargs)
 
     class Meta: 
         db_table = 'products'
 
 class Like(TimeStampModel):
     user    = models.ForeignKey(User,on_delete=models.CASCADE)
-    Product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='likes')
     like    = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'likes'
