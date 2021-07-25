@@ -157,8 +157,6 @@ class ProductsView(View):
             return JsonResponse({"message":"VALIDATION_ERROR"},status=400)
             
 
-
-
 class ProductDetailView(View): 
     @query_debugger
     def get(self, request, product_id):
