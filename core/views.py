@@ -1,11 +1,13 @@
-import functools, time, jwt
+import functools, time, jwt, boto3, uuid
 
 from django.db   import connection, reset_queries
 from django.conf import settings
 from django.http import JsonResponse
 
-from my_settings  import SECRET_KEY, ALGORITHM
-from users.models import User 
+from iltal.settings  import AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
+from logging         import error
+from my_settings     import SECRET_KEY, ALGORITHM
+from users.models    import User 
 
 def query_debugger(func):
     @functools.wraps(func)
@@ -40,3 +42,25 @@ def confirm_user(func):
             return JsonResponse({'message': 'INVAILD_USER'}, status=400)
 
     return wrapper
+
+def upload_data(file):
+    try :
+        s3_client = boto3.client(
+                        's3',
+                        aws_access_key_id     = AWS_ACCESS_KEY_ID,
+                        aws_secret_access_key = AWS_SECRET_ACCESS_KEY
+                    )
+        filename = uuid.uuid4().hex
+        s3_client.upload_fileobj(
+            file,
+            'hsahnprojectdb',
+            filename,
+            ExtraArgs = {
+                "ContentType": file.content_type,
+            }
+        )
+        return 'https://hsahnprojectdb.s3.us-east-2.amazonaws.com/' + filename
+    except KeyError:
+            return JsonResponse({"message" : "INVALID_KEYS"}, status = 400)
+    # except error as e:        
+    #     return JsonResponse({"MESSAGE": e}, status=404)
