@@ -34,6 +34,7 @@ def confirm_user(func):
             else: 
                 #request.user = None
                 request.user = User.objects.get(id=1)
+                
             return func(self, request, *args, **kwargs)
         except jwt.DecodeError:
             return JsonResponse({'message': 'INVAILD_USER'}, status=400)
