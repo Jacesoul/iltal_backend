@@ -59,7 +59,7 @@ class ProductsTest(TestCase):
 
     def test_products_category_get(self):
         client = Client()
-        response = client.get('/products?category=1&subcategory=1', content_type = 'application/json')
+        response = client.get('/products/public?category=1&subcategory=1', content_type = 'application/json')
         self.assertEqual(response.json(),{
             'message' : [{
                 "id"        : 1,
@@ -78,7 +78,7 @@ class ProductsTest(TestCase):
 
     def test_products_total_get(self):
         client = Client()
-        response = client.get('/products', content_type = 'application/json')
+        response = client.get('/products/public', content_type = 'application/json')
         self.assertEqual(response.json(),{
             'message' : [{
                 "id"        : 1,
@@ -101,7 +101,7 @@ class ProductsTest(TestCase):
             "productID": 1,
             "like"     : "True"
         }	
-        response = client.post('/products', json.dumps(like), content_type='application/json')
+        response = client.post('/products/private', json.dumps(like), content_type='application/json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), 
             {
@@ -114,7 +114,7 @@ class ProductsTest(TestCase):
             "productID": 100,
             "like"     : "True"
         }	
-        response = client.post('/products', json.dumps(like), content_type='application/json')
+        response = client.post('/products/private', json.dumps(like), content_type='application/json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 
             {
@@ -127,7 +127,7 @@ class ProductsTest(TestCase):
             "productID": 1,
             "like"     : "e"
         }	
-        response = client.post('/products', json.dumps(like), content_type='application/json')
+        response = client.post('/products/private', json.dumps(like), content_type='application/json')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), 
             {
@@ -136,7 +136,7 @@ class ProductsTest(TestCase):
 
     def test_products_detail_get(self):
         client = Client()
-        response = client.get('/products/1', content_type = 'application/json')
+        response = client.get('/products/private/1', content_type = 'application/json')
         self.assertEqual(response.json(),{
             'message' : [{
                 "id"      : 1,
