@@ -152,4 +152,3 @@ class HostProductView(View):
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status=404)
 
         return JsonResponse({'MESSAGE':'SUCCESS'}, status=201)    
->>>>>>> 1d2595c9dfd89e601fdabf3e2b4c8e197e08e9d2
