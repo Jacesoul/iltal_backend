@@ -1,4 +1,5 @@
 import os
+
 from pathlib import Path
 from my_settings import SECRET_KEY, DATABASES, AWS_ACCESS_KEY_ID , AWS_SECRET_ACCESS_KEY
 
@@ -15,7 +16,7 @@ SECRET_KEY = SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', '13.125.219.225','13.125.219.225:8000']
 
 
 # Application definition
@@ -187,8 +188,6 @@ CACHES = {
         }
     }
 }
-
-
 
 # S3 설정을 위한 변수
 # AWS_xxx 의 변수들은 aws-S3, boto3 모듈을 위한 변수들이다.
