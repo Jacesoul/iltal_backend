@@ -6,17 +6,16 @@ from django.db.models       import Q, Prefetch
 from django.core.cache      import cache
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
+from users.utils            import user_validator
 from datetime               import datetime
 from products.models        import Category, Subcategory, Product, Like
-
-from users.utils            import user_validator
-from users.models   import User, Host
-from core.views     import query_debugger, confirm_user, AWSAPI
-from my_settings     import BUCKET, SECRET_KEY, ALGORITHM
-from iltal.settings  import AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
+from users.models           import User, Host
+from core.views             import query_debugger, confirm_user, AWSAPI
+from my_settings            import BUCKET, SECRET_KEY, ALGORITHM
+from iltal.settings         import AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
 
 class PrivateProductsView(View):
-    @confirm_user
+    @user_validator
     def get(self, request):
         try: 
             user        = request.user
@@ -62,7 +61,7 @@ class PrivateProductsView(View):
         except ValueError:
             return JsonResponse({"message":"VALUE_ERROR"},status=400)
 
-    @confirm_user
+    @user_validator
     def post(self, request):
         try: 
             data    = json.loads(request.body)
@@ -83,7 +82,7 @@ class PrivateProductsView(View):
             return JsonResponse({"message":"VALIDATION_ERROR"},status=400)
 
 class PrivateProductDetailView(View): 
-    @confirm_user
+    @user_validator
     def get(self, request, product_id):
         try:
             user     = request.user
@@ -109,7 +108,7 @@ class PrivateProductDetailView(View):
         except ValueError:
             return JsonResponse({"message":"VALUE_ERROR"},status=400)
 
-    @confirm_user
+    @user_validator
     def post(self, request, product_id):
         try: 
             data    = json.loads(request.body)
@@ -147,10 +146,8 @@ class HostProductView(View):
 
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status=404)
-
         except Product.DoesNotExist:
             return JsonResponse({"MESSAGE": "INVALID_USER"}, status=404)
-        
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status=404)
 

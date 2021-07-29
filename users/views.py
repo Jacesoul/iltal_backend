@@ -129,3 +129,18 @@ class HostView(View):
             return JsonResponse({'message': 'INVALID_USER'}, status=401) 
 
         return JsonResponse ({"MESSAGE":"SUCCESS"}, status = 201)
+
+    @user_validator    
+    def patch(self, request):
+        try:
+            host             = Host.objects.get(user_id = request.user.id)
+            host.nickname    = json.loads(request.body)['nickname']
+            host.save()
+
+        except KeyError:
+            return JsonResponse({'message': 'KEY_ERROR'}, status=400)
+
+        except Host.DoesNotExist:
+            return JsonResponse({'message': 'HOST_ERROR'}, status=400) 
+                        
+        return JsonResponse ({"MESSAGE":"SUCCESS"}, status = 201)
