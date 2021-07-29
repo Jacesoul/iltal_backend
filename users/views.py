@@ -112,11 +112,11 @@ class HostView(View):
 
             if Host.objects.filter(user_id = request.user.id).exists() :
                 return JsonResponse({"MESSAGE": "DUPLE_USER"}, status=404)
-            print(request.FILES["background_url"])
+            print(request.FILES["profile_url"])
             Host.objects.create(
                 user_id     = request.user.id,
                 nickname    = request.POST.get('nickname'),
-                profile_url = aws.upload_file(request.FILES["background_url"])
+                profile_url = aws.upload_file(request.FILES["profile_url"])
             )
 
         except AttributeError :
