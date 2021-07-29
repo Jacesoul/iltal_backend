@@ -8,8 +8,11 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from datetime               import datetime
 from products.models        import Category, Subcategory, Product, Like
-from users.models           import User, Host
-from core.views             import query_debugger, confirm_user, upload_data
+
+from users.models   import User, Host
+from core.views     import query_debugger, confirm_user, AWSAPI
+from my_settings     import BUCKET, SECRET_KEY, ALGORITHM
+from iltal.settings  import AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
 
 class PrivateProductsView(View):
     @confirm_user
@@ -128,21 +131,25 @@ class PrivateProductDetailView(View):
 class HostProductView(View):
     def post(self, request):
         try:
-            print(request.FILES.get('background_url'))
+            aws = AWSAPI(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, BUCKET)
             Product.objects.create (
                 title           =  request.POST.get('title'),
                 region          =  request.POST.get('region'),
                 price           =  request.POST.get('price'),
                 is_group        =  request.POST.get('is_group'),
-                background_url  =  upload_data(request.FILES.get('background_url')),
+                background_url  =  aws.upload_file(request.FILES.get('background_url')),
                 is_deleted      =  False,
                 host_id         =  request.POST.get('host_id'),
                 subcategory_id  =  request.POST.get('subcategory_id')
             )    
-            return JsonResponse({'MESSAGE':'SUCCESS'}, status=201)    
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status=404)
+
         except Product.DoesNotExist:
             return JsonResponse({"MESSAGE": "INVALID_USER"}, status=404)
+        
         except KeyError:
             return JsonResponse({"MESSAGE": "KEY_ERROR"}, status=404)
+
+        return JsonResponse({'MESSAGE':'SUCCESS'}, status=201)    
+>>>>>>> 1d2595c9dfd89e601fdabf3e2b4c8e197e08e9d2
